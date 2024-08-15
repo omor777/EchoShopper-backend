@@ -4,14 +4,17 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDb from "./db.js";
 dotenv.config();
+import routes from "./routes/index.js";
+import Product from "./models/product.model.js";
 
 const app = express();
 const port = process.env.PORT || 7000;
 
 app.use(express.json());
 app.use(cors());
+app.use(routes);
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
   res.status(200).json({ message: "Ok" });
 });
 
