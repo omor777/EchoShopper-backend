@@ -6,26 +6,42 @@ const getAllProductsController = async (req, res, next) => {
   const search = req.query?.search;
   const sort = req.query?.sort;
   let categories = req.query?.categories;
-  
+  let brands = req.query?.brands;
 
   if (categories) {
     categories = categories.split(",");
   }
 
-  // filter related query
-  const filterQuery = {
-    name: { $regex: search, $options: "i" },
-  };
+  if (brands) {
+    brands = brands.split(",");
+  }
 
-  if (!!categories) {
+  // Filter query
+  const filterQuery = {};
+
+  // Search query
+  if (search) {
+    filterQuery.name = { $regex: search, $options: "i" };
+  }
+
+  // Filter by brands and categories
+  if (brands?.length > 0) {
+    filterQuery.brand = { $in: brands };
+  }
+
+  if (categories?.length > 0) {
     filterQuery.category = { $in: categories };
   }
 
-  // sort related query
-  // TODO: sort by date newest product first appear
-  let sortQuery;
+  // Sort query
+  let sortQuery = {};
+
+  // Sort by price or default to sorting by the newest products (assuming createdAt exists)
   if (sort === "price-high-to-low" || sort === "price-low-to-high") {
-    sortQuery = { price: sort === "price-high-to-low" ? -1 : 1 };
+    sortQuery.price = sort === "price-high-to-low" ? -1 : 1;
+  } else if(sort === 'new') {
+    // Sort by date, newest products first
+    sortQuery.createdAt = -1;
   }
 
   try {
