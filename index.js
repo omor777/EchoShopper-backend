@@ -21,7 +21,7 @@ app.listen(port, () => {
 });
 
 mongoose
-  .connect("mongodb://localhost:27017/ecoShopperDB")
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Connect to DB successful!");
   })
