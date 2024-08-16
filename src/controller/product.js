@@ -5,11 +5,21 @@ const getAllProductsController = async (req, res, next) => {
   const limit = parseInt(req.query?.limit) || 9;
   const search = req.query?.search;
   const sort = req.query?.sort;
+  let categories = req.query?.categories;
+  
+
+  if (categories) {
+    categories = categories.split(",");
+  }
 
   // filter related query
   const filterQuery = {
     name: { $regex: search, $options: "i" },
   };
+
+  if (!!categories) {
+    filterQuery.category = { $in: categories };
+  }
 
   // sort related query
   // TODO: sort by date newest product first appear
