@@ -2,12 +2,13 @@ import Product from "../models/product.model.js";
 
 const getAllProductsController = async (req, res, next) => {
   const page = parseInt(req.query?.page) || 1;
-  const limit = parseInt(req.query?.limit) || 9;
+  const limit = parseInt(req.query?.limit) || 6;
   const search = req.query?.search;
   const sort = req.query?.sort;
   let categories = req.query?.categories;
   let brands = req.query?.brands;
   let priceRange = req.query?.priceRange;
+  console.log(priceRange);
 
   if (categories) {
     categories = categories.split(",");
@@ -20,6 +21,8 @@ const getAllProductsController = async (req, res, next) => {
   if (priceRange) {
     priceRange = priceRange.split(",").map((item) => parseFloat(item));
   }
+
+  console.log(priceRange);
 
   // Filter query
   const filterQuery = {};
