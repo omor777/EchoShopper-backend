@@ -7,6 +7,7 @@ const getAllProductsController = async (req, res, next) => {
   const sort = req.query?.sort;
   let categories = req.query?.categories;
   let brands = req.query?.brands;
+  let priceRange = req.query?.priceRange;
 
   if (categories) {
     categories = categories.split(",");
@@ -14,6 +15,10 @@ const getAllProductsController = async (req, res, next) => {
 
   if (brands) {
     brands = brands.split(",");
+  }
+
+  if (priceRange) {
+    priceRange = priceRange.split(",").map((item) => parseFloat(item));
   }
 
   // Filter query
@@ -33,13 +38,17 @@ const getAllProductsController = async (req, res, next) => {
     filterQuery.category = { $in: categories };
   }
 
+  if (Array.isArray(priceRange)) {
+    filterQuery.price = { $gte: priceRange[0], $lte: priceRange[1] };
+  }
+
   // Sort query
   let sortQuery = {};
 
   // Sort by price or default to sorting by the newest products (assuming createdAt exists)
   if (sort === "price-high-to-low" || sort === "price-low-to-high") {
     sortQuery.price = sort === "price-high-to-low" ? -1 : 1;
-  } else if(sort === 'new') {
+  } else if (sort === "new") {
     // Sort by date, newest products first
     sortQuery.createdAt = -1;
   }
